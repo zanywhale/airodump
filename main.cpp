@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 #include "packetHandler.h"
 using namespace std;
 
@@ -12,7 +13,8 @@ int main(int argc, char *argv[])
     else{
         // check interface is validation
         packetHandler *pktHandler = new packetHandler(argv[1]);
-        pktHandler->dump();
+        std::thread t1 = pktHandler->hopping();
+        std::thread t2 = pktHandler->dump();
     }
 
     return 0;

@@ -5,6 +5,7 @@
 #include <ctime>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
 #include "packetHandler.h"
 #include "dot11.h"
 #include "dump.h"
@@ -15,6 +16,7 @@ packetHandler::packetHandler(char INTERFACE[16])
 {
     strncpy(this->interface, INTERFACE, 16);
     tmpCheck = 0;
+    ggomsu = 0;
 }
 
 packetHandler::~packetHandler(){}
@@ -69,12 +71,16 @@ void packetHandler::checkInterface()
     }
 }
 
-void packetHandler::hopping()
+std::thread packetHandler::hopping()
 {
     char cmd[100];
     nowChannel = rand()%13 + 1;
-    sprintf(cmd, "iwconfig %s channel %d", this->interface, nowChannel);
-    system(cmd);
+    ggomsu += 10;
+    if(ggomsu > 100){
+        sprintf(cmd, "iwconfig %s channel %d", this->interface, nowChannel);
+        system(cmd);
+        ggomsu = 0;
+    }
 }
 
 void packetHandler::findTag(const char *tag, int pktLength, apInfo *ap)
@@ -112,7 +118,6 @@ void packetHandler::capture()
     while(true){
         hopping();
         packetHandler::printAll();
-
         res = pcap_next_ex(handle, &header, &packet);
         if(res == 1){
             parser(packet);
@@ -246,7 +251,7 @@ void packetHandler::printAll()
     }
 }
 
-void packetHandler::dump()
+std::thread packetHandler::dump()
 {
     packetHandler::checkInterface();
     packetHandler::capture();

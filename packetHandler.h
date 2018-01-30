@@ -1,9 +1,12 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 #include <pcap.h>
+#include <thread>
+#include <iostream>
 #include "dot11.h"
 #include "apInfo.h"
 #include "dump.h"
+using namespace std;
 
 class packetHandler{
 private:
@@ -14,6 +17,7 @@ private:
     int res;
     char interface[16];
     int nowChannel;
+    int ggomsu;
 protected:
     const u_char *packet;       /* The actual packet */
     int tmpCheck;
@@ -23,11 +27,11 @@ public:
     void checkInterface();
     void findTag(const char *tag, int pktLength, apInfo *ap);
     void capture();
-    void hopping();
+    std::thread hopping();
+    std::thread dump();
     void parser(const u_char *pkt);
     void deauthPacket(string _bssid, string _staid);
     void printAll();
-    void dump();
 };
 
 #endif // PACKET_HANDLER_H

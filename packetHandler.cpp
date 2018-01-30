@@ -141,9 +141,6 @@ void packetHandler::parser(const u_char *pkt)
     switch(idf->typeInfo){
     // Beacon Frame
     case '\x00\x80':
-//        beaconFrame *bf = (beaconFrame *)(pkt + rth->length + sizeof(ieeeDot11Frame));
-//        tagMetadata *tmd = (tagMetadata *)(pkt + rth->length + sizeof(ieeeDot11Frame) + sizeof(beaconFrame));
-
         // limit bssid[6]
         _bssid = (char *)idf->addr3;
         _bssid.erase(_bssid.begin()+6, _bssid.end());
